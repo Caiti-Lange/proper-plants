@@ -1,11 +1,11 @@
 import PlantCard from "./PlantCard";
 
-export default function PlantList({ items }) {
+export default function PlantList({ items, addToCart }) {
   return (
     <section>
       <h2>Plants</h2>
       {items.map((item) => {
-        return <PlantCard key={item.id} plant={item} />;
+        return <PlantCard key={item.id} plant={item} addToCart={addToCart} />;
       })}
     </section>
   );
