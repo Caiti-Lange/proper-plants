@@ -1,30 +1,43 @@
 import { useState } from "react";
-import plantList from "./data.js";
-//components
-import PlantList from "./plants/PlantList.jsx";
-import Cart from "./cart/Cart.jsx";
-//styles
-import "./app.css";
+
+import PLANTS from "./data";
+
+import Cart from "./cart/Cart";
+import Plants from "./plants/Plants";
+
+export default function App() {
+  const [cart, setCart] = useState([]);
 
 export default function App() {
   const [plants] = useState(plantList);
   const [cart, setCart] = useState([]);
 
   const addToCart = (plant) => {
-    if (cart.length === 0) {
-      setCart([{ ...plant, quantity: 1 }]);
-      return;
+    const itemExists = cart.find((i) => i.id === plant.id);
+    if (itemExists) {
+      setCart(
+        cart.map((item) =>
+          item.id === plant.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item,
+        ),
+      );
+    } else {
+      const item = { ...plant, quantity: 1 };
+      setCart([...cart, item]);
     }
+  };
 
-    const newCart = cart.map((item) => {
-      if (item.id === plant.id) {
-        return { ...plant, quantity: plant.quantity + 1 };
-      } else {
-        return { ...plant, quantity: 1 };
-      }
-    });
-
-    setCart(newCart);
+  const removeFromCart = (itemToRemove) => {
+    setCart(
+      cart
+        .map((item) =>
+          item.id === itemToRemove.id
+            ? { ...item, quantity: item.quantity - 1 }
+            : item,
+        )
+        .filter((item) => item.quantity > 0),
+    );
   };
 
   return (
@@ -32,7 +45,7 @@ export default function App() {
       <h1>Proper Plants</h1>
       <main className="plantShop">
         <PlantList items={plants} addToCart={addToCart} />
-        <Cart cart={cart} />
+        <Cart cart={cart} removeFromCart={removeFromCart} addToCart={addToCart}/>
       </main>
     </>
   );
